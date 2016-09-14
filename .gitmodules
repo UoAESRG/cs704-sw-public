@@ -1,0 +1,6 @@
+[submodule "modules/libat86rf212"]
+	path = modules/libat86rf212
+	url = git@github.com:ryankurte/libat86rf212.git
+[submodule "modules/libmpu9250"]
+	path = modules/libmpu9250
+	url = git@github.com:ryankurte/libmpu9250.git
