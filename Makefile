@@ -30,7 +30,7 @@ TARGET_HEX = ${BUILD_DIR}/${TARGET}.hex
 TARGET_MAP = ${BUILD_DIR}/${TARGET}.map
 TARGET_DMP = ${BUILD_DIR}/${TARGET}.dmp
 
-all: version ${BUILD_DIR} ${TARGET_BIN} ${TARGET_HEX} ${TARGET_DMP} size
+all: dir version ${BUILD_DIR} ${TARGET_BIN} ${TARGET_HEX} ${TARGET_DMP} size
 
 # Application files
 
@@ -88,7 +88,10 @@ ${APP_LIB}: ${APP_OBJ}
 	@echo "[application] Linking app library"
 	@${AR} qc $@ $^
 
-version:
+dir:
+	@mkdir -p ${BUILD_DIR}
+
+version: dir
 	@./version.py CS704 ${BUILD_DIR}/cs704_version.h
 
 # Application Linking
@@ -130,7 +133,7 @@ d: debug
 ds: debug-server
 
 #### MISC #####
-.PHONY: clean size
+.PHONY: clean size dir version
 
 clean:
 	rm -rf ${BUILD_DIR}/*
