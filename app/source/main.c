@@ -31,8 +31,8 @@
 #define ADDRESS             0x0001      //!< Master address is 0x0001, other beacons must increment this
 #define CHANNEL             2           //!< Channel for beacon use
 
-#define BEACON_MODE
-//#define USB_SERIAL
+//#define BEACON_MODE
+#define USB_SERIAL
 
 // ISR globals
 __IO uint32_t systick_count = 0;
@@ -99,6 +99,11 @@ void error_flash(int error_id, int error_code)
 }
 
 
+float do_math(float in) {
+    float a = pow(2.0, in);
+    return a;
+} 
+
 int main(void)
 {
     int res;
@@ -142,9 +147,14 @@ int main(void)
     }
 #endif
 
+    // Test to ensure floats are compiling
+    float a = do_math(7.0);
+
     while(1) {
         //Your logic here
         LED0_PORT->ODR ^= LED0_PIN;
+
+        printf("boop\r\n");
 
         delay_ms(500);
     }
