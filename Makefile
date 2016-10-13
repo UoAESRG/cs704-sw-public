@@ -84,7 +84,7 @@ ${BUILD_DIR}/%.o: ${APP_BASE}/source/%.c
 	@echo "[application] Building: $<"
 	@${CC} ${CFLAGS} -c $< -o $@
 
-${APP_LIB}: ${APP_OBJ}
+${APP_LIB}: ${APP_OBJ} version
 	@echo "[application] Linking app library"
 	@${AR} qc $@ $^
 
