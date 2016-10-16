@@ -87,21 +87,21 @@ ${BUILD_DIR}/%.o: ${APP_BASE}/source/%.c
 	@echo "[application] Building: $<"
 	@${CC} ${CFLAGS} -c $< -o $@
 
-${APP_LIB}: ${APP_VER} ${APP_OBJ}
+${APP_LIB}: ${APP_OBJ}
 	@echo "[application] Linking app library"
 	@${AR} rc $@ $?
 
 dir:
 	@mkdir -p ${BUILD_DIR}
 
-${APP_VER}: dir
-	@./version.py ${MODULE} $@
+version: dir
+	@./version.py ${MODULE} ${APP_VER}
 
 # Application Linking
 
-${TARGET_ELF}: ${APP_LIB} ${STM32_LIB} ${MPU9250_LIB} ${AT86RF212_LIB}
+${TARGET_ELF}: version ${APP_OBJ} ${STM32_LIB} ${MPU9250_LIB} ${AT86RF212_LIB}
 	@echo "Linking Application"
-	@${CC} ${CFLAGS} ${LDFLAGS} -o ${BUILD_DIR}/${TARGET}.elf $^ -lm -lc -lgcc -lnosys
+	@${CC} ${CFLAGS} ${LDFLAGS} -o ${BUILD_DIR}/${TARGET}.elf $(filter-out version,$^) -lm -lc -lgcc -lnosys
 
 size: ${TARGET_ELF}
 	${OBJSIZE} $<
@@ -136,7 +136,7 @@ d: debug
 ds: debug-server
 
 #### MISC #####
-.PHONY: clean size dir
+.PHONY: clean size dir version
 
 clean:
 	rm -rf ${BUILD_DIR}/*
