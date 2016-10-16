@@ -5,6 +5,8 @@ TARGET = cs704
 BUILD_DIR = build
 FLASH_START=0x08000000
 
+MODULE = CS704
+
 DBGFLAGS=-g -gdwarf-2 -O0 -DPLATFORM_SLEEP_MS=delay_ms -DPLATFORM_SLEEP_US=delay_us
 
 # Tools
@@ -30,7 +32,7 @@ TARGET_HEX = ${BUILD_DIR}/${TARGET}.hex
 TARGET_MAP = ${BUILD_DIR}/${TARGET}.map
 TARGET_DMP = ${BUILD_DIR}/${TARGET}.dmp
 
-all: dir version ${BUILD_DIR} ${TARGET_BIN} ${TARGET_HEX} ${TARGET_DMP} size
+all: ${BUILD_DIR} ${TARGET_BIN} ${TARGET_HEX} ${TARGET_DMP} size
 
 # Application files
 
@@ -38,6 +40,7 @@ APP_BASE = app
 APP_INC = -I${APP_BASE}/include -I${BUILD_DIR}
 
 APP_LIB = ${BUILD_DIR}/lib${APP_BASE}.a
+APP_VER := ${BUILD_DIR}/${TARGET}_version.h
 APP_SRC := $(wildcard $(APP_BASE)/source/*.c)
 APP_HDR := $(wildcard $(APP_BASE)/include/*.h)
 APP_OBJ := $(patsubst $(APP_BASE)/source/%.c, ${BUILD_DIR}/%.o, ${APP_SRC})
@@ -84,19 +87,19 @@ ${BUILD_DIR}/%.o: ${APP_BASE}/source/%.c
 	@echo "[application] Building: $<"
 	@${CC} ${CFLAGS} -c $< -o $@
 
-${APP_LIB}: ${APP_OBJ} version
+${APP_LIB}: ${APP_VER} ${APP_OBJ}
 	@echo "[application] Linking app library"
-	@${AR} qc $@ $^
+	@${AR} rc $@ $?
 
 dir:
 	@mkdir -p ${BUILD_DIR}
 
-version: dir
-	@./version.py CS704 ${BUILD_DIR}/cs704_version.h
+${APP_VER}: dir
+	@./version.py ${MODULE} $@
 
 # Application Linking
 
-${TARGET_ELF}: ${APP_OBJ} ${STM32_LIB} ${MPU9250_LIB} ${AT86RF212_LIB}
+${TARGET_ELF}: ${APP_LIB} ${STM32_LIB} ${MPU9250_LIB} ${AT86RF212_LIB}
 	@echo "Linking Application"
 	@${CC} ${CFLAGS} ${LDFLAGS} -o ${BUILD_DIR}/${TARGET}.elf $^ -lm -lc -lgcc -lnosys
 
@@ -133,7 +136,7 @@ d: debug
 ds: debug-server
 
 #### MISC #####
-.PHONY: clean size dir version
+.PHONY: clean size dir
 
 clean:
 	rm -rf ${BUILD_DIR}/*
