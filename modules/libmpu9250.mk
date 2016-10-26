@@ -17,5 +17,5 @@ ${BUILD_DIR}/%.o: ${MPU9250_BASE}/lib/source/%.c
 
 ${MPU9250_LIB}: ${MPU9250_OBJ}
 	@echo "[libmpu9250] linking MPU9250 driver library"
-	@${AR} qc $@ $^
+	@${AR} rc $@ $?
 

@@ -17,5 +17,5 @@ ${BUILD_DIR}/%.o: ${AT86RF212_BASE}/lib/source/%.c
 
 ${AT86RF212_LIB}: ${AT86RF212_OBJ}
 	@echo "[libat86rf212] linking AT86RF212 driver library"
-	@${AR} qc $@ $^
+	@${AR} rc $@ $?
 
